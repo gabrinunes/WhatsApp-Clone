@@ -1,4 +1,4 @@
-package gabrielcunha.cursoandroid.whatsapp;
+package gabrielcunha.cursoandroid.whatsapp.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import com.google.android.material.textfield.TextInputLayout;
+import gabrielcunha.cursoandroid.whatsapp.R;
 
 public class LoginActivity extends AppCompatActivity {
 
