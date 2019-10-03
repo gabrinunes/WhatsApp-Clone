@@ -3,7 +3,6 @@ package gabrielcunha.cursoandroid.whatsapp.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -40,8 +39,8 @@ public class CadastroActivity extends AppCompatActivity {
     private void inicializarComponentes() {
 
         editNome = findViewById(R.id.editNome);
-        editSenha = findViewById(R.id.editSenha);
-        editEmail = findViewById(R.id.editEmail);
+        editSenha = findViewById(R.id.editLoginSenha);
+        editEmail = findViewById(R.id.editlLoginEmail);
         buttonCadastrar = findViewById(R.id.buttonCadastrar);
     }
 
