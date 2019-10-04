@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -67,8 +68,15 @@ public class MainActivity extends AppCompatActivity {
                 deslogarUsuario();
                 finish();
                 break;
+            case R.id.menuConfigurações:
+                abrirConfiguracoes();
+                break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void abrirConfiguracoes() {
+        startActivity(new Intent(MainActivity.this,ConfiguracoesActivity.class));
     }
 
     public void deslogarUsuario(){
