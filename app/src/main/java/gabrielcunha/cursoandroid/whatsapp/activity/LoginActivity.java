@@ -16,6 +16,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.google.firebase.auth.FirebaseUser;
 
 import gabrielcunha.cursoandroid.whatsapp.R;
 import gabrielcunha.cursoandroid.whatsapp.config.ConfiguracaoFirebase;
@@ -31,7 +32,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
+        autenticacao = ConfiguracaoFirebase.getFirebaseAutenticacao();
         inicializarComponentes();
     }
 
@@ -76,6 +77,15 @@ public class LoginActivity extends AppCompatActivity {
                    }
                }
            });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseUser usuarioAtual = autenticacao.getCurrentUser();
+        if(usuarioAtual!=null){
+            abrirTelaPrincipal();
+        }
     }
 
     public void ValidarLogin(View view){
