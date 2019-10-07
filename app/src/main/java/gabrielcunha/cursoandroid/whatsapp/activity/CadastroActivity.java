@@ -3,6 +3,7 @@ package gabrielcunha.cursoandroid.whatsapp.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -19,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 
 import gabrielcunha.cursoandroid.whatsapp.R;
 import gabrielcunha.cursoandroid.whatsapp.config.ConfiguracaoFirebase;
+import gabrielcunha.cursoandroid.whatsapp.helper.Base64Custom;
 import gabrielcunha.cursoandroid.whatsapp.model.Usuario;
 
 public class CadastroActivity extends AppCompatActivity {
@@ -44,35 +46,47 @@ public class CadastroActivity extends AppCompatActivity {
         buttonCadastrar = findViewById(R.id.buttonCadastrar);
     }
 
-     public void cadastrarUsuario(Usuario usuario){
+    public void cadastrarUsuario(final Usuario usuario) {
 
         autenticacao = ConfiguracaoFirebase.getFirebaseAutenticacao();
         autenticacao.createUserWithEmailAndPassword(
-                usuario.getEmail(),usuario.getSenha()
+                usuario.getEmail(), usuario.getSenha()
         ).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-               if(task.isSuccessful()){
-                  exibirMensagem("Sucesso ao cadastrar usuário");
-               }else{
-                   String excecao="";
-                   try {
-                       throw task.getException();
-                   }catch(FirebaseAuthWeakPasswordException e) {
-                       excecao = "Digite uma senha mais forte";
-                   }catch (FirebaseAuthInvalidCredentialsException e) {
-                       excecao = "Por favor, digite um e-mail váilod";
-                   }catch (FirebaseAuthUserCollisionException e){
-                       excecao = "Esta conta já foi cadastrada";
-                   }catch (Exception e){
-                       excecao ="Erro ao cadastrar usuário: " + e.getMessage();
-                       e.printStackTrace();
-                   }
-                   exibirMensagem(excecao);
-               }
+                if (task.isSuccessful()) {
+                    exibirMensagem("Sucesso ao cadastrar usuário");
+                    finish();
+                    //Salvando nome do usuario cadastrado
+
+                    try {
+                        String idUsuario = Base64Custom.codificarBase64(usuario.getEmail());
+                        usuario.setIdUsuario(idUsuario);
+                        usuario.salvar();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+
+                } else {
+                    String excecao = "";
+                    try {
+                        throw task.getException();
+                    } catch (FirebaseAuthWeakPasswordException e) {
+                        excecao = "Digite uma senha mais forte";
+                    } catch (FirebaseAuthInvalidCredentialsException e) {
+                        excecao = "Por favor, digite um e-mail váilod";
+                    } catch (FirebaseAuthUserCollisionException e) {
+                        excecao = "Esta conta já foi cadastrada";
+                    } catch (Exception e) {
+                        excecao = "Erro ao cadastrar usuário: " + e.getMessage();
+                        e.printStackTrace();
+                    }
+                    exibirMensagem(excecao);
+                }
             }
         });
-     }
+    }
 
 
     public void validarCadastroUsuario(View view) {
@@ -85,12 +99,12 @@ public class CadastroActivity extends AppCompatActivity {
         if (!textNome.isEmpty()) {
             if (!textEmail.isEmpty()) {
                 if (!textSenha.isEmpty()) {
-                     Usuario usuario = new Usuario();
-                     usuario.setNome(textNome);
-                     usuario.setEmail(textEmail);
-                     usuario.setSenha(textSenha);
+                    Usuario usuario = new Usuario();
+                    usuario.setNome(textNome);
+                    usuario.setEmail(textEmail);
+                    usuario.setSenha(textSenha);
 
-                     cadastrarUsuario(usuario);
+                    cadastrarUsuario(usuario);
                 } else {
                     exibirMensagem("Preencha a senha!");
                 }
