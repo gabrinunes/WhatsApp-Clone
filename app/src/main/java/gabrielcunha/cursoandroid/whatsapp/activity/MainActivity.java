@@ -23,6 +23,8 @@ import gabrielcunha.cursoandroid.whatsapp.fragment.ConversasFragment;
 
 public class MainActivity extends AppCompatActivity {
 
+
+
     private FirebaseAuth autenticacao;
 
     @Override
