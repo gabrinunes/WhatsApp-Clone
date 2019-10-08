@@ -86,4 +86,29 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
 
+    <ImageButton
+        android:id="@+id/imageButtonCamera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+        app:layout_constraintEnd_toStartOf="@+id/imageButtonGaleria"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/circleImageViewFotoPerfil"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/ic_camera_ciza_24dp" />
+
+    <ImageButton
+        android:id="@+id/imageButtonGaleria"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/imageButtonCamera"
+        app:layout_constraintTop_toTopOf="@+id/circleImageViewFotoPerfil"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/ic_photo_cinza_24dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
