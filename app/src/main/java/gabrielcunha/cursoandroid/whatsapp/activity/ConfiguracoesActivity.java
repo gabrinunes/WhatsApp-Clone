@@ -16,10 +16,23 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.ByteArrayOutputStream;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import gabrielcunha.cursoandroid.whatsapp.R;
+import gabrielcunha.cursoandroid.whatsapp.config.ConfiguracaoFirebase;
+import gabrielcunha.cursoandroid.whatsapp.helper.Base64Custom;
 import gabrielcunha.cursoandroid.whatsapp.helper.Permissao;
+import gabrielcunha.cursoandroid.whatsapp.helper.UsuarioFirebase;
 
 public class ConfiguracoesActivity extends AppCompatActivity {
 
@@ -34,12 +47,17 @@ public class ConfiguracoesActivity extends AppCompatActivity {
     private static final int SELECAO_CAMERA = 100;
     private static final int SELECAO_GALERIA = 200;
     private CircleImageView circleImageViewPerfil;
+    private StorageReference storageReference;
+    private DatabaseReference firebaseRef;
+    private String idUsuario;
+    private String urlImagemSelecionado="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_configuracoes);
         iniciarlizarComponentes();
+        incializarServicosFirebase();
 
         //Validar permissões
 
@@ -85,6 +103,14 @@ public class ConfiguracoesActivity extends AppCompatActivity {
         circleImageViewPerfil = findViewById(R.id.circleImageViewFotoPerfil);
     }
 
+    private void incializarServicosFirebase(){
+
+        storageReference = ConfiguracaoFirebase.getFirebaseStorage();
+        firebaseRef = ConfiguracaoFirebase.getFirebaseDatabase();
+        idUsuario = UsuarioFirebase.getIdUsuario();
+
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -107,6 +133,32 @@ public class ConfiguracoesActivity extends AppCompatActivity {
                 if(imagem!=null){
 
                     circleImageViewPerfil.setImageBitmap(imagem);
+
+
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    imagem.compress(Bitmap.CompressFormat.JPEG,70,baos);
+                    byte[] dadosImagem = baos.toByteArray();
+
+                    StorageReference imagemRef = storageReference
+                            .child("imagens")
+                            .child("perfil")
+                            .child(idUsuario + "jpeg")
+                            .child("perfil.jpeg");
+
+                    UploadTask uploadTask = imagemRef.putBytes(dadosImagem);
+                    uploadTask.addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                          ExibirMensagem("Erro ao fazer upload da imagem");
+                        }
+                    }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                            urlImagemSelecionado = taskSnapshot.getDownloadUrl().toString();
+                            ExibirMensagem("Sucesso ao fazer upload");
+                        }
+                    });
                 }
 
             }catch (Exception e){
@@ -142,5 +194,9 @@ public class ConfiguracoesActivity extends AppCompatActivity {
         AlertDialog dialog = builder.create();
         dialog.show();
 
+    }
+
+    private void  ExibirMensagem(String texto){
+        Toast.makeText(this,texto,Toast.LENGTH_SHORT).show();
     }
 }
