@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import gabrielcunha.cursoandroid.whatsapp.R;
 import gabrielcunha.cursoandroid.whatsapp.config.ConfiguracaoFirebase;
 import gabrielcunha.cursoandroid.whatsapp.helper.Base64Custom;
+import gabrielcunha.cursoandroid.whatsapp.helper.UsuarioFirebase;
 import gabrielcunha.cursoandroid.whatsapp.model.Usuario;
 
 public class CadastroActivity extends AppCompatActivity {
@@ -56,6 +57,7 @@ public class CadastroActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
                     exibirMensagem("Sucesso ao cadastrar usuário");
+                    UsuarioFirebase.atualizarNomeUsuario(usuario.getNome());
                     finish();
                     //Salvando nome do usuario cadastrado
 
