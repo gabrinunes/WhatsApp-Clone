@@ -60,7 +60,7 @@
             android:text="@string/usuario_nome" />
 
         <ImageView
-            android:id="@+id/imageView3"
+            android:id="@+id/imageButtonSalvar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"

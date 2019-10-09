@@ -17,6 +17,7 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -36,6 +37,7 @@ import gabrielcunha.cursoandroid.whatsapp.config.ConfiguracaoFirebase;
 import gabrielcunha.cursoandroid.whatsapp.helper.Base64Custom;
 import gabrielcunha.cursoandroid.whatsapp.helper.Permissao;
 import gabrielcunha.cursoandroid.whatsapp.helper.UsuarioFirebase;
+import gabrielcunha.cursoandroid.whatsapp.model.Usuario;
 
 public class ConfiguracoesActivity extends AppCompatActivity {
 
@@ -46,15 +48,17 @@ public class ConfiguracoesActivity extends AppCompatActivity {
 
     };
 
-    private ImageButton imageButtonCamera,imageButtonGaleria;
+    private ImageButton imageButtonCamera, imageButtonGaleria;
     private EditText editTextNomePerfil;
+    private ImageView imageViewButtonSalvar;
     private static final int SELECAO_CAMERA = 100;
     private static final int SELECAO_GALERIA = 200;
     private CircleImageView circleImageViewPerfil;
     private StorageReference storageReference;
     private DatabaseReference firebaseRef;
     private String idUsuario;
-    private String urlImagemSelecionado="";
+    private Usuario usuarioLogado;
+    private String urlImagemSelecionado = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +69,7 @@ public class ConfiguracoesActivity extends AppCompatActivity {
 
         //Validar permissões
 
-        Permissao.validarPermissoes(permissoesNecessarias,this,1);
+        Permissao.validarPermissoes(permissoesNecessarias, this, 1);
 
 
         Toolbar toolbar = findViewById(R.id.toolbarPrincipal);
@@ -76,13 +80,28 @@ public class ConfiguracoesActivity extends AppCompatActivity {
 
         recuperaDadosPerfil();
 
+        imageViewButtonSalvar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String nomePerfil = editTextNomePerfil.getText().toString();
+                boolean retorno = UsuarioFirebase.atualizarNomeUsuario(nomePerfil);
+                if (retorno) {
+
+                    usuarioLogado.setNome(nomePerfil);
+                    usuarioLogado.atualizar();
+
+                    ExibirMensagem("Nome alterado com sucesso!");
+                }
+            }
+        });
+
         imageButtonCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if(i.resolveActivity(getPackageManager())!=null){
-                    startActivityForResult(i,SELECAO_CAMERA);
+                if (i.resolveActivity(getPackageManager()) != null) {
+                    startActivityForResult(i, SELECAO_CAMERA);
                 }
 
 
@@ -93,9 +112,9 @@ public class ConfiguracoesActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Intent i = new Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                if(i.resolveActivity(getPackageManager())!=null){
-                    startActivityForResult(i,SELECAO_GALERIA);
+                Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                if (i.resolveActivity(getPackageManager()) != null) {
+                    startActivityForResult(i, SELECAO_GALERIA);
                 }
             }
 
@@ -108,11 +127,11 @@ public class ConfiguracoesActivity extends AppCompatActivity {
         editTextNomePerfil.setText(usuario.getDisplayName());
         Uri url = usuario.getPhotoUrl();
 
-        if(url!=null){
+        if (url != null) {
             Picasso.get()
                     .load(url)
                     .into(circleImageViewPerfil);
-        }else{
+        } else {
             circleImageViewPerfil.setImageResource(R.drawable.padrao);
         }
 
@@ -124,13 +143,15 @@ public class ConfiguracoesActivity extends AppCompatActivity {
         imageButtonGaleria = findViewById(R.id.imageButtonGaleria);
         circleImageViewPerfil = findViewById(R.id.circleImageViewFotoPerfil);
         editTextNomePerfil = findViewById(R.id.editTextNomePefil);
+        imageViewButtonSalvar = findViewById(R.id.imageButtonSalvar);
     }
 
-    private void incializarServicosFirebase(){
+    private void incializarServicosFirebase() {
 
         storageReference = ConfiguracaoFirebase.getFirebaseStorage();
         firebaseRef = ConfiguracaoFirebase.getFirebaseDatabase();
         idUsuario = UsuarioFirebase.getIdUsuario();
+        usuarioLogado = UsuarioFirebase.getDadosUsuarioLogado();
 
     }
 
@@ -138,28 +159,28 @@ public class ConfiguracoesActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(resultCode == RESULT_OK){
+        if (resultCode == RESULT_OK) {
             Bitmap imagem = null;
 
-            try{
+            try {
 
-                switch (requestCode){
+                switch (requestCode) {
                     case SELECAO_CAMERA:
                         imagem = (Bitmap) data.getExtras().get("data");
                         break;
                     case SELECAO_GALERIA:
                         Uri localImagemSelecionada = data.getData();
-                        imagem = MediaStore.Images.Media.getBitmap(getContentResolver(),localImagemSelecionada);
+                        imagem = MediaStore.Images.Media.getBitmap(getContentResolver(), localImagemSelecionada);
                         break;
                 }
 
-                if(imagem!=null){
+                if (imagem != null) {
 
                     circleImageViewPerfil.setImageBitmap(imagem);
 
 
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    imagem.compress(Bitmap.CompressFormat.JPEG,70,baos);
+                    imagem.compress(Bitmap.CompressFormat.JPEG, 70, baos);
                     byte[] dadosImagem = baos.toByteArray();
 
                     StorageReference imagemRef = storageReference
@@ -172,7 +193,7 @@ public class ConfiguracoesActivity extends AppCompatActivity {
                     uploadTask.addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                          ExibirMensagem("Erro ao fazer upload da imagem");
+                            ExibirMensagem("Erro ao fazer upload da imagem");
                         }
                     }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -181,13 +202,13 @@ public class ConfiguracoesActivity extends AppCompatActivity {
                             urlImagemSelecionado = taskSnapshot.getDownloadUrl().toString();
                             ExibirMensagem("Sucesso ao fazer upload");
 
-                        Uri url = taskSnapshot.getDownloadUrl();
-                        atualizaFotoUsuario(url);
+                            Uri url = taskSnapshot.getDownloadUrl();
+                            atualizaFotoUsuario(url);
                         }
                     });
                 }
 
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -195,21 +216,26 @@ public class ConfiguracoesActivity extends AppCompatActivity {
 
     private void atualizaFotoUsuario(Uri url) {
 
-        UsuarioFirebase.atualizarFotoUsuario(url);
+        boolean retorno = UsuarioFirebase.atualizarFotoUsuario(url);
+        if (retorno) {
+            usuarioLogado.setFoto(url.toString());
+            usuarioLogado.atualizar();
+            ExibirMensagem("Sua foto foi alterada!");
+        }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        for(int permissaoResultado:grantResults){
-            if(permissaoResultado== PackageManager.PERMISSION_DENIED){
+        for (int permissaoResultado : grantResults) {
+            if (permissaoResultado == PackageManager.PERMISSION_DENIED) {
                 alertaValidacaoPermissao();
             }
         }
     }
 
-    private void alertaValidacaoPermissao(){
+    private void alertaValidacaoPermissao() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Permissões Negadas");
@@ -227,7 +253,7 @@ public class ConfiguracoesActivity extends AppCompatActivity {
 
     }
 
-    private void  ExibirMensagem(String texto){
-        Toast.makeText(this,texto,Toast.LENGTH_SHORT).show();
+    private void ExibirMensagem(String texto) {
+        Toast.makeText(this, texto, Toast.LENGTH_SHORT).show();
     }
 }
