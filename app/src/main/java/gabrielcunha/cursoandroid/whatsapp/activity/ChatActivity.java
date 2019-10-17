@@ -2,13 +2,10 @@ package gabrielcunha.cursoandroid.whatsapp.activity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -42,6 +39,7 @@ import gabrielcunha.cursoandroid.whatsapp.adapter.AdapterMensagens;
 import gabrielcunha.cursoandroid.whatsapp.config.ConfiguracaoFirebase;
 import gabrielcunha.cursoandroid.whatsapp.helper.Base64Custom;
 import gabrielcunha.cursoandroid.whatsapp.helper.UsuarioFirebase;
+import gabrielcunha.cursoandroid.whatsapp.model.Conversa;
 import gabrielcunha.cursoandroid.whatsapp.model.Mensagem;
 import gabrielcunha.cursoandroid.whatsapp.model.Usuario;
 
@@ -216,9 +214,24 @@ public class ChatActivity extends AppCompatActivity {
             //Salvar a mensagem para o destinatario
             salvarMensagem(idUsuarioDestinatario, idUsuarioRemetente, msg);
 
+            //Salvar conversa
+            salvarConversa(msg);
+
         } else {
             exibirMensagem("Digite uma mensagem para enviar!");
         }
+    }
+
+    private void salvarConversa(Mensagem msg) {
+
+        Conversa conversaRemetente = new Conversa();
+        conversaRemetente.setIdRemetente(idUsuarioRemetente);
+        conversaRemetente.setIdDestinatario(idUsuarioDestinatario);
+        conversaRemetente.setUltimaMensagem(msg.getMensagem());
+        conversaRemetente.setUsuarioExibicao(usuarioDestinatario);
+
+        conversaRemetente.salvar();
+
     }
 
     private void salvarMensagem(String idRemetente, String idDestinatario, Mensagem msg) {
