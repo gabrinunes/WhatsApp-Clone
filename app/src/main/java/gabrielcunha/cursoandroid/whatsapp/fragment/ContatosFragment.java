@@ -54,7 +54,7 @@ public class ContatosFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_contatos, container, false);
 
-        recyclerContatos = view.findViewById(R.id.recyclerContatos);
+        recyclerContatos = view.findViewById(R.id.recyclerConversas);
         usuarioRef = ConfiguracaoFirebase.getFirebaseDatabase().child("usuarios");
         usarioAtual = UsuarioFirebase.getUsuarioAtual();
 
