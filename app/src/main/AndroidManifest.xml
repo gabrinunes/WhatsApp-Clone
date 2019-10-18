@@ -10,6 +10,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".activity.GrupoActivity"
+            android:label="@string/title_activity_grupo"
+            android:parentActivityName=".activity.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="gabrielcunha.cursoandroid.whatsapp.activity.MainActivity" />
+        </activity>
+        <activity
             android:name=".activity.ChatActivity"
             android:label="@string/title_activity_chat"
             android:parentActivityName=".activity.MainActivity"
@@ -35,8 +44,8 @@
     <uses-feature
         android:name="android.hardware.camera2"
         android:required="true" />
-    <uses-permission android:name="android.permission.CAMERA" />
-
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
 
 </manifest>
