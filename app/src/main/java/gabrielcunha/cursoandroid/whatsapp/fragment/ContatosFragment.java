@@ -106,17 +106,6 @@ public class ContatosFragment extends Fragment {
                 }
         ));
 
-        /*Define usuário com e-mail vazio
-         *em caso de e-mail vazio o usuário será utilizado como
-         * cabecalho, exibindo novo grupo
-         */
-        Usuario itemGrupo = new Usuario();
-        itemGrupo.setNome("Novo grupo");
-        itemGrupo.setEmail("");
-
-        contatos.add(itemGrupo);
-
-
         return view;
     }
 
@@ -138,6 +127,16 @@ public class ContatosFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
+                contatos.clear();
+                /*Define usuário com e-mail vazio
+                 *em caso de e-mail vazio o usuário será utilizado como
+                 * cabecalho, exibindo novo grupo
+                 */
+                Usuario itemGrupo = new Usuario();
+                itemGrupo.setNome("Novo grupo");
+                itemGrupo.setEmail("");
+
+                contatos.add(itemGrupo);
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     Usuario usuario = ds.getValue(Usuario.class);
                     String emailUsuarioAtual = usarioAtual.getEmail();
