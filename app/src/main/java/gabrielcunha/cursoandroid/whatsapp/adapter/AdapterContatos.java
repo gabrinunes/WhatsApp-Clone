@@ -20,12 +20,12 @@ import gabrielcunha.cursoandroid.whatsapp.model.Usuario;
 
 public class AdapterContatos extends RecyclerView.Adapter<AdapterContatos.MyViewHolder> {
 
-    private List<Usuario> usuarios;
+    private List<Usuario> contatos;
     private Context context;
 
-    public AdapterContatos(List<Usuario> usuarios, Context c) {
+    public AdapterContatos(List<Usuario> contatos, Context c) {
 
-        this.usuarios = usuarios;
+        this.contatos = contatos;
         this.context = c;
     }
 
@@ -38,7 +38,7 @@ public class AdapterContatos extends RecyclerView.Adapter<AdapterContatos.MyView
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        Usuario usuario = usuarios.get(position);
+        Usuario usuario = contatos.get(position);
         boolean cabecalho = usuario.getEmail().isEmpty();
 
         holder.nomePerfil.setText(usuario.getNome());
@@ -63,7 +63,7 @@ public class AdapterContatos extends RecyclerView.Adapter<AdapterContatos.MyView
 
     @Override
     public int getItemCount() {
-        return usuarios.size();
+        return contatos.size();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
