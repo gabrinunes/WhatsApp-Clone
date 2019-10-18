@@ -46,6 +46,9 @@ dependencies {
     //Dependencia Picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
 
+    //Dependendia Material Seach View
+    implementation 'com.miguelcatalan:materialsearchview:1.4.0'
+
 
 }
 apply plugin: 'com.google.gms.google-services'

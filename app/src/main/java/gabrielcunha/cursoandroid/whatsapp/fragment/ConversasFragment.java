@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ public class ConversasFragment extends Fragment {
     private AdapterConversas adapterConversas;
     private DatabaseReference conversasRef;
     private ValueEventListener valueEventListenerConversas;
+    private String identificadorUsuario;
 
 
 
@@ -55,7 +57,7 @@ public class ConversasFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_conversas, container, false);
 
         recyclerConVersas = view.findViewById(R.id.recyclerConversas);
-        String identificadorUsuario = UsuarioFirebase.getIdUsuario();
+        identificadorUsuario = UsuarioFirebase.getIdUsuario();
         conversasRef = ConfiguracaoFirebase.getFirebaseDatabase().child("conversas").child(identificadorUsuario);
 
         //Configura o adapter
@@ -113,7 +115,33 @@ public class ConversasFragment extends Fragment {
         conversasRef.removeEventListener(valueEventListenerConversas);
     }
 
-    private void recuperarConversas() {
+
+    public void pesquisarConversas(String newText) {
+
+        List<Conversa> listaConversasBusca = new ArrayList<>();
+
+        for(Conversa conversa : conversas){
+
+            String nome = conversa.getUsuarioExibicao().getNome().toLowerCase();
+            String ultimaMensagem = conversa.getUltimaMensagem().toLowerCase();
+
+            if(nome.contains(newText) || ultimaMensagem.contains(newText)){
+                listaConversasBusca.add(conversa);
+            }
+        }
+        adapterConversas = new AdapterConversas(listaConversasBusca,getActivity());
+        recyclerConVersas.setAdapter(adapterConversas);
+        adapterConversas.notifyDataSetChanged();
+
+    }
+
+    public void recarregarConversas(){
+        adapterConversas = new AdapterConversas(conversas,getActivity());
+        recyclerConVersas.setAdapter(adapterConversas);
+        adapterConversas.notifyDataSetChanged();
+    }
+
+    public void recuperarConversas() {
 
         valueEventListenerConversas = conversasRef.addValueEventListener(new ValueEventListener() {
             @Override
