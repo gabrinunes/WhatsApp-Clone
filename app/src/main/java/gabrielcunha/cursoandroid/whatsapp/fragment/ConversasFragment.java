@@ -44,14 +44,13 @@ public class ConversasFragment extends Fragment {
     private String identificadorUsuario;
 
 
-
     public ConversasFragment() {
         // Required empty public constructor
     }
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_conversas, container, false);
@@ -62,7 +61,7 @@ public class ConversasFragment extends Fragment {
 
         //Configura o adapter
 
-        adapterConversas = new AdapterConversas(conversas,getActivity());
+        adapterConversas = new AdapterConversas(conversas, getActivity());
 
 
         //Configura o RecyclerView
@@ -83,9 +82,19 @@ public class ConversasFragment extends Fragment {
 
                         Conversa conversaSelecionada = conversas.get(position);
 
-                        Intent i = new Intent(getActivity(), ChatActivity.class);
-                        i.putExtra("chatContato",conversaSelecionada.getUsuarioExibicao());
-                        startActivity(i);
+                        if (conversaSelecionada.getIsGroup().equals("true")) {
+
+                            Intent i = new Intent(getActivity(),ChatActivity.class);
+                            i.putExtra("chatGrupo",conversaSelecionada.getGrupo());
+                            startActivity(i);
+
+                        } else {
+
+                            Intent i = new Intent(getActivity(), ChatActivity.class);
+                            i.putExtra("chatContato", conversaSelecionada.getUsuarioExibicao());
+                            startActivity(i);
+                        }
+
                     }
 
                     @Override
@@ -100,7 +109,7 @@ public class ConversasFragment extends Fragment {
                 }
         ));
 
-        return  view;
+        return view;
     }
 
     @Override
@@ -120,23 +129,23 @@ public class ConversasFragment extends Fragment {
 
         List<Conversa> listaConversasBusca = new ArrayList<>();
 
-        for(Conversa conversa : conversas){
+        for (Conversa conversa : conversas) {
 
             String nome = conversa.getUsuarioExibicao().getNome().toLowerCase();
             String ultimaMensagem = conversa.getUltimaMensagem().toLowerCase();
 
-            if(nome.contains(newText) || ultimaMensagem.contains(newText)){
+            if (nome.contains(newText) || ultimaMensagem.contains(newText)) {
                 listaConversasBusca.add(conversa);
             }
         }
-        adapterConversas = new AdapterConversas(listaConversasBusca,getActivity());
+        adapterConversas = new AdapterConversas(listaConversasBusca, getActivity());
         recyclerConVersas.setAdapter(adapterConversas);
         adapterConversas.notifyDataSetChanged();
 
     }
 
-    public void recarregarConversas(){
-        adapterConversas = new AdapterConversas(conversas,getActivity());
+    public void recarregarConversas() {
+        adapterConversas = new AdapterConversas(conversas, getActivity());
         recyclerConVersas.setAdapter(adapterConversas);
         adapterConversas.notifyDataSetChanged();
     }
@@ -148,7 +157,7 @@ public class ConversasFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 conversas.clear();
 
-                for(DataSnapshot ds:dataSnapshot.getChildren()){
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     Conversa conversa = ds.getValue(Conversa.class);
                     conversas.add(conversa);
                 }

@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -203,7 +202,7 @@ public class GrupoActivity extends AppCompatActivity {
         recyclerMembros = findViewById(R.id.recyclerMembros);
         usuarioRef = ConfiguracaoFirebase.getFirebaseDatabase().child("usuarios");
         usarioAtual = UsuarioFirebase.getUsuarioAtual();
-        fabAvancarCadastro = findViewById(R.id.fabAvancarCadastro);
+        fabAvancarCadastro = findViewById(R.id.fabSalvarGrupo);
     }
 
 }

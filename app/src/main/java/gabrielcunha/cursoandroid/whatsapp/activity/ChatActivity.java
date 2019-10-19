@@ -40,6 +40,7 @@ import gabrielcunha.cursoandroid.whatsapp.config.ConfiguracaoFirebase;
 import gabrielcunha.cursoandroid.whatsapp.helper.Base64Custom;
 import gabrielcunha.cursoandroid.whatsapp.helper.UsuarioFirebase;
 import gabrielcunha.cursoandroid.whatsapp.model.Conversa;
+import gabrielcunha.cursoandroid.whatsapp.model.Grupo;
 import gabrielcunha.cursoandroid.whatsapp.model.Mensagem;
 import gabrielcunha.cursoandroid.whatsapp.model.Usuario;
 
@@ -61,6 +62,7 @@ public class ChatActivity extends AppCompatActivity {
     //identificador usuarios remetente e destinatario
     private String idUsuarioRemetente;
     private String idUsuarioDestinatario;
+    private Grupo grupo;
 
     private RecyclerView recyclerMensagens;
 
@@ -80,21 +82,40 @@ public class ChatActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
 
-            usuarioDestinatario = (Usuario) bundle.getSerializable("chatContato");
-            textViewNome.setText(usuarioDestinatario.getNome());
+            if (bundle.containsKey("chatGrupo")) {
 
-            String foto = usuarioDestinatario.getFoto();
-            if (foto != null) {
-                Picasso.get()
-                        .load(foto)
-                        .into(circleImageViewFoto);
+                grupo = (Grupo) bundle.getSerializable("chatGrupo");
+                idUsuarioDestinatario = grupo.getId();
+                textViewNome.setText(grupo.getNome());
+
+                String foto = grupo.getFoto();
+                if (foto != null) {
+                    Picasso.get()
+                            .load(foto)
+                            .into(circleImageViewFoto);
+                } else {
+                    circleImageViewFoto.setImageResource(R.drawable.padrao);
+                }
+
             } else {
-                circleImageViewFoto.setImageResource(R.drawable.padrao);
+                /*********/
+                usuarioDestinatario = (Usuario) bundle.getSerializable("chatContato");
+                textViewNome.setText(usuarioDestinatario.getNome());
+
+                String foto = usuarioDestinatario.getFoto();
+                if (foto != null) {
+                    Picasso.get()
+                            .load(foto)
+                            .into(circleImageViewFoto);
+                } else {
+                    circleImageViewFoto.setImageResource(R.drawable.padrao);
+                }
+
+                //recuperar dados usuario destinatario
+
+                idUsuarioDestinatario = Base64Custom.codificarBase64(usuarioDestinatario.getEmail());
+                /***********/
             }
-
-            //recuperar dados usuario destinatario
-
-            idUsuarioDestinatario = Base64Custom.codificarBase64(usuarioDestinatario.getEmail());
         }
 
         //Configuração do adapter
@@ -140,7 +161,7 @@ public class ChatActivity extends AppCompatActivity {
                         image = (Bitmap) data.getExtras().get("data");
                         break;
                 }
-                if(image!=null){
+                if (image != null) {
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     image.compress(Bitmap.CompressFormat.JPEG, 70, baos);
                     byte[] dadosImagem = baos.toByteArray();
@@ -172,9 +193,9 @@ public class ChatActivity extends AppCompatActivity {
                             mensagem.setImagem(url);
 
                             //Salvando para o remetente
-                            salvarMensagem(idUsuarioRemetente,idUsuarioDestinatario,mensagem);
+                            salvarMensagem(idUsuarioRemetente, idUsuarioDestinatario, mensagem);
                             //Salvando para o destinatario
-                            salvarMensagem(idUsuarioDestinatario,idUsuarioRemetente,mensagem);
+                            salvarMensagem(idUsuarioDestinatario, idUsuarioRemetente, mensagem);
                         }
                     });
                 }

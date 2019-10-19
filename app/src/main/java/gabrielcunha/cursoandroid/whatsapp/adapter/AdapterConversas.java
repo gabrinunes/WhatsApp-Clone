@@ -17,6 +17,7 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 import gabrielcunha.cursoandroid.whatsapp.R;
 import gabrielcunha.cursoandroid.whatsapp.model.Conversa;
+import gabrielcunha.cursoandroid.whatsapp.model.Grupo;
 import gabrielcunha.cursoandroid.whatsapp.model.Usuario;
 
 public class AdapterConversas extends RecyclerView.Adapter<AdapterConversas.MyViewHolder> {
@@ -33,7 +34,7 @@ public class AdapterConversas extends RecyclerView.Adapter<AdapterConversas.MyVi
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemLista = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_contatos,parent,false);
+        View itemLista = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_contatos, parent, false);
         return new MyViewHolder(itemLista);
     }
 
@@ -42,19 +43,35 @@ public class AdapterConversas extends RecyclerView.Adapter<AdapterConversas.MyVi
         Conversa conversa = conversas.get(position);
         holder.ultimaMensagem.setText(conversa.getUltimaMensagem());
 
-        Usuario usuario = conversa.getUsuarioExibicao();
-        holder.nomePerfil.setText(usuario.getNome());
+        if (conversa.getIsGroup().equals("true")) {
 
-        //Carrega imagem
+            Grupo grupo = conversa.getGrupo();
+            holder.nomePerfil.setText(grupo.getNome());
+            if (grupo.getFoto() != null) {
+                Uri uri = Uri.parse(grupo.getFoto());
+                Picasso.get()
+                        .load(uri)
+                        .into(holder.imagemPerfil);
+            } else {
+                holder.imagemPerfil.setImageResource(R.drawable.padrao);
+            }
 
-        if(usuario.getFoto()!=null){
-            Uri uri = Uri.parse(usuario.getFoto());
-            Picasso.get()
-                    .load(uri)
-                    .into(holder.imagemPerfil);
-        }else{
-            holder.imagemPerfil.setImageResource(R.drawable.padrao);
+        } else {
+            Usuario usuario = conversa.getUsuarioExibicao();
+            holder.nomePerfil.setText(usuario.getNome());
+
+            //Carrega imagem
+
+            if (usuario.getFoto() != null) {
+                Uri uri = Uri.parse(usuario.getFoto());
+                Picasso.get()
+                        .load(uri)
+                        .into(holder.imagemPerfil);
+            } else {
+                holder.imagemPerfil.setImageResource(R.drawable.padrao);
+            }
         }
+
 
     }
 
