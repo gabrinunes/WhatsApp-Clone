@@ -12,4 +12,5 @@
     <string name="usuario_nome">Nome do usuário</string>
     <string name="title_activity_chat">ChatActivity</string>
     <string name="title_activity_grupo">GrupoActivity</string>
+    <string name="title_activity_cadastro_grupo">CadastroGrupoActivity</string>
 </resources>

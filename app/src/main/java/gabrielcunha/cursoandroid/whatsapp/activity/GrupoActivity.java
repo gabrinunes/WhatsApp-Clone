@@ -1,5 +1,6 @@
 package gabrielcunha.cursoandroid.whatsapp.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.AdapterView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +42,7 @@ public class GrupoActivity extends AppCompatActivity {
     private DatabaseReference usuarioRef;
     private FirebaseUser usarioAtual;
     private Toolbar toolbar;
+    private FloatingActionButton fabAvancarCadastro;
 
     public void atualizarMemborsToolbar(){
 
@@ -148,13 +151,12 @@ public class GrupoActivity extends AppCompatActivity {
                 )
         );
 
-
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        fabAvancarCadastro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent i = new Intent(GrupoActivity.this,CadastroGrupoActivity.class);
+                i.putExtra("membros", (Serializable) listaMembrosSelecionados);
+                startActivity(i);
             }
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -201,6 +203,7 @@ public class GrupoActivity extends AppCompatActivity {
         recyclerMembros = findViewById(R.id.recyclerMembros);
         usuarioRef = ConfiguracaoFirebase.getFirebaseDatabase().child("usuarios");
         usarioAtual = UsuarioFirebase.getUsuarioAtual();
+        fabAvancarCadastro = findViewById(R.id.fabAvancarCadastro);
     }
 
 }
