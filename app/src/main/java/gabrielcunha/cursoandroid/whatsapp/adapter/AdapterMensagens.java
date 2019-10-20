@@ -57,10 +57,23 @@ public class AdapterMensagens extends RecyclerView.Adapter<AdapterMensagens.MyVi
             Picasso.get()
                     .load(imagem)
                     .into(holder.imagem);
+            String nome = mensagem.getNome();
+            if(!nome.isEmpty()){
+                holder.nome.setText(nome);
+            }else{
+                holder.nome.setVisibility(View.GONE);
+            }
             //Esconder o texto
             holder.mensagem.setVisibility(View.GONE);
         } else {
           holder.mensagem.setText(msg);
+
+            String nome = mensagem.getNome();
+            if(!nome.isEmpty()){
+                holder.nome.setText(nome);
+            }else{
+                holder.nome.setVisibility(View.GONE);
+            }
 
           //Esconder a imagem
 
@@ -89,7 +102,7 @@ public class AdapterMensagens extends RecyclerView.Adapter<AdapterMensagens.MyVi
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView mensagem;
+        TextView mensagem,nome;
         ImageView imagem;
 
         public MyViewHolder(@NonNull View itemView) {
@@ -97,6 +110,7 @@ public class AdapterMensagens extends RecyclerView.Adapter<AdapterMensagens.MyVi
 
             mensagem = itemView.findViewById(R.id.textMensagem);
             imagem = itemView.findViewById(R.id.imageMensgemFoto);
+            nome = itemView.findViewById(R.id.textNomeExibicao);
         }
     }
 }

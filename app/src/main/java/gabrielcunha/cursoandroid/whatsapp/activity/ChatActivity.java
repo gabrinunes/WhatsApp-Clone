@@ -52,6 +52,7 @@ public class ChatActivity extends AppCompatActivity {
     private ImageView imageCamera;
     private static final int SELECAO_CAMERA = 100;
     private Usuario usuarioDestinatario;
+    private Usuario usuarioRemetente = UsuarioFirebase.getDadosUsuarioLogado();
     private AdapterMensagens adapterMensagens;
     private List<Mensagem> mensagens = new ArrayList<>();
     private DatabaseReference firebaseRef;
@@ -74,9 +75,6 @@ public class ChatActivity extends AppCompatActivity {
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
         inicializarComponentes();
-
-        //Recupera dados do usuario remetente
-        idUsuarioRemetente = UsuarioFirebase.getIdUsuario();
 
         //Recuperar dados do usuário destinatario
         Bundle bundle = getIntent().getExtras();
@@ -212,6 +210,9 @@ public class ChatActivity extends AppCompatActivity {
         recyclerMensagens = findViewById(R.id.recyclerMensagens);
         firebaseRef = ConfiguracaoFirebase.getFirebaseDatabase();
         imageCamera = findViewById(R.id.imageCamera);
+        usuarioRemetente = UsuarioFirebase.getDadosUsuarioLogado();
+        //Recupera dados do usuario remetente
+        idUsuarioRemetente = UsuarioFirebase.getIdUsuario();
     }
 
     private void exibirMensagem(String texto) {
@@ -237,8 +238,11 @@ public class ChatActivity extends AppCompatActivity {
                 //Salvar a mensagem para o destinatario
                 salvarMensagem(idUsuarioDestinatario, idUsuarioRemetente, msg);
 
-                //Salvar conversa
-                salvarConversa(msg, false);
+                //Salvar conversa remetente
+                salvarConversa(idUsuarioRemetente,idUsuarioDestinatario,usuarioDestinatario,msg, false);
+                //Salvar conver destinatario
+                salvarConversa(idUsuarioDestinatario,idUsuarioRemetente,usuarioRemetente,msg, false);
+
             } else {
 
                 for (Usuario membro : grupo.getMembros()) {
@@ -249,11 +253,12 @@ public class ChatActivity extends AppCompatActivity {
                     Mensagem mensagem = new Mensagem();
                     mensagem.setIdUsuario(idUsuarioLogadoGrupo);
                     mensagem.setMensagem(textoMensagem);
+                    mensagem.setNome(usuarioRemetente.getNome());
 
                     //salvar mensagem para o membro
                     salvarMensagem(idRemetenteGrupo, idUsuarioDestinatario, mensagem);
                     //Salvar conversa
-                    salvarConversa(mensagem, true);
+                    salvarConversa(idRemetenteGrupo,idUsuarioDestinatario,usuarioDestinatario,mensagem, true);
                 }
             }
 
@@ -262,20 +267,20 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
-    private void salvarConversa(Mensagem msg, boolean isGroup) {
+    private void salvarConversa(String idRemetente,String idDestinatario,Usuario usuarioExibicao,Mensagem msg, boolean isGroup) {
 
 
         //Salvar conversa remetente
         Conversa conversaRemetente = new Conversa();
-        conversaRemetente.setIdRemetente(idUsuarioRemetente);
-        conversaRemetente.setIdDestinatario(idUsuarioDestinatario);
+        conversaRemetente.setIdRemetente(idRemetente);
+        conversaRemetente.setIdDestinatario(idDestinatario);
         conversaRemetente.setUltimaMensagem(msg.getMensagem());
 
         if (isGroup) {//Conversa grupo
             conversaRemetente.setIsGroup("true");
             conversaRemetente.setGrupo(grupo);
         } else {//Conversa normal
-            conversaRemetente.setUsuarioExibicao(usuarioDestinatario);
+            conversaRemetente.setUsuarioExibicao(usuarioExibicao);
             conversaRemetente.setIsGroup("false");
         }
 
