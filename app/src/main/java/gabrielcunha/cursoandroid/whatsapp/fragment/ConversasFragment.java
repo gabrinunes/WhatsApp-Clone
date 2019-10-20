@@ -80,12 +80,13 @@ public class ConversasFragment extends Fragment {
                     @Override
                     public void onItemClick(View view, int position) {
 
-                        Conversa conversaSelecionada = conversas.get(position);
+                        List<Conversa>listaConversasAtualizadas = adapterConversas.getConversas();
+                        Conversa conversaSelecionada = listaConversasAtualizadas.get(position);
 
                         if (conversaSelecionada.getIsGroup().equals("true")) {
 
-                            Intent i = new Intent(getActivity(),ChatActivity.class);
-                            i.putExtra("chatGrupo",conversaSelecionada.getGrupo());
+                            Intent i = new Intent(getActivity(), ChatActivity.class);
+                            i.putExtra("chatGrupo", conversaSelecionada.getGrupo());
                             startActivity(i);
 
                         } else {
@@ -131,44 +132,56 @@ public class ConversasFragment extends Fragment {
 
         for (Conversa conversa : conversas) {
 
-            String nome = conversa.getUsuarioExibicao().getNome().toLowerCase();
-            String ultimaMensagem = conversa.getUltimaMensagem().toLowerCase();
+            if (conversa.getUsuarioExibicao() != null) {
+                String nome = conversa.getUsuarioExibicao().getNome().toLowerCase();
+                String ultimaMensagem = conversa.getUltimaMensagem().toLowerCase();
 
-            if (nome.contains(newText) || ultimaMensagem.contains(newText)) {
-                listaConversasBusca.add(conversa);
-            }
-        }
-        adapterConversas = new AdapterConversas(listaConversasBusca, getActivity());
-        recyclerConVersas.setAdapter(adapterConversas);
-        adapterConversas.notifyDataSetChanged();
-
-    }
-
-    public void recarregarConversas() {
-        adapterConversas = new AdapterConversas(conversas, getActivity());
-        recyclerConVersas.setAdapter(adapterConversas);
-        adapterConversas.notifyDataSetChanged();
-    }
-
-    public void recuperarConversas() {
-
-        valueEventListenerConversas = conversasRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                conversas.clear();
-
-                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    Conversa conversa = ds.getValue(Conversa.class);
-                    conversas.add(conversa);
+                if (nome.contains(newText) || ultimaMensagem.contains(newText)) {
+                    listaConversasBusca.add(conversa);
                 }
-                adapterConversas.notifyDataSetChanged();
+            } else {
+                if (conversa.getUsuarioExibicao() != null) {
+                    String nome = conversa.getGrupo().getNome().toLowerCase();
+                    String ultimaMensagem = conversa.getUltimaMensagem().toLowerCase();
+
+                    if (nome.contains(newText) || ultimaMensagem.contains(newText)) {
+                        listaConversasBusca.add(conversa);
+                    }
+                }
             }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
             }
-        });
+            adapterConversas = new AdapterConversas(listaConversasBusca, getActivity());
+            recyclerConVersas.setAdapter(adapterConversas);
+            adapterConversas.notifyDataSetChanged();
 
+        }
+
+        public void recarregarConversas () {
+            adapterConversas = new AdapterConversas(conversas, getActivity());
+            recyclerConVersas.setAdapter(adapterConversas);
+            adapterConversas.notifyDataSetChanged();
+        }
+
+        public void recuperarConversas () {
+
+            valueEventListenerConversas = conversasRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    conversas.clear();
+
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                        Conversa conversa = ds.getValue(Conversa.class);
+                        conversas.add(conversa);
+                    }
+                    adapterConversas.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+        }
     }
-}

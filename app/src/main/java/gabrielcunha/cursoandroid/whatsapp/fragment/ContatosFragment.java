@@ -26,9 +26,11 @@ import gabrielcunha.cursoandroid.whatsapp.R;
 import gabrielcunha.cursoandroid.whatsapp.activity.ChatActivity;
 import gabrielcunha.cursoandroid.whatsapp.activity.GrupoActivity;
 import gabrielcunha.cursoandroid.whatsapp.adapter.AdapterContatos;
+import gabrielcunha.cursoandroid.whatsapp.adapter.AdapterConversas;
 import gabrielcunha.cursoandroid.whatsapp.config.ConfiguracaoFirebase;
 import gabrielcunha.cursoandroid.whatsapp.helper.RecyclerItemClickListener;
 import gabrielcunha.cursoandroid.whatsapp.helper.UsuarioFirebase;
+import gabrielcunha.cursoandroid.whatsapp.model.Conversa;
 import gabrielcunha.cursoandroid.whatsapp.model.Usuario;
 
 /**
@@ -80,7 +82,9 @@ public class ContatosFragment extends Fragment {
                     @Override
                     public void onItemClick(View view, int position) {
 
-                        Usuario usuarioSelecionado = contatos.get(position);
+                        List<Usuario> listaUsuariosAtualizada = adapterContatos.getContatos();
+
+                        Usuario usuarioSelecionado = listaUsuariosAtualizada.get(position);
                         boolean cabecalho = usuarioSelecionado.getEmail().isEmpty();
 
                         if (cabecalho) {
@@ -153,6 +157,30 @@ public class ContatosFragment extends Fragment {
 
             }
         });
+    }
+
+    public void pesquisarContatos(String newText) {
+
+        List<Usuario> listaContatosBusca = new ArrayList<>();
+
+        for (Usuario usuario :contatos) {
+
+            String nome = usuario.getNome().toLowerCase();
+            if(nome.contains(newText)){
+                listaContatosBusca.add(usuario);
+
+            }
+        }
+        adapterContatos = new AdapterContatos(listaContatosBusca, getActivity());
+        recyclerContatos.setAdapter(adapterContatos);
+        adapterContatos.notifyDataSetChanged();
+
+    }
+
+    public void recarregarContatos () {
+        adapterContatos = new AdapterContatos(contatos, getActivity());
+        recyclerContatos.setAdapter(adapterContatos);
+        adapterContatos.notifyDataSetChanged();
     }
 
 

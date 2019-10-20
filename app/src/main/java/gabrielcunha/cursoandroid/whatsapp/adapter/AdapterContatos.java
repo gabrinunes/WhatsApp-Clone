@@ -29,6 +29,10 @@ public class AdapterContatos extends RecyclerView.Adapter<AdapterContatos.MyView
         this.context = c;
     }
 
+    public List<Usuario> getContatos (){
+        return this.contatos;
+    }
+
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
