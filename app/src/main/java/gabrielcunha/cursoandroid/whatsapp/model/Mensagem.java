@@ -6,9 +6,20 @@ public class Mensagem {
     private String mensagem;
     private String imagem;
     private String nome;
+    private String hora;
+
+
 
     public Mensagem() {
         this.setNome("");
+    }
+
+    public String getHora() {
+        return hora;
+    }
+
+    public void setHora(String hora) {
+        this.hora = hora;
     }
 
     public String getNome() {

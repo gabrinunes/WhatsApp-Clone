@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -52,11 +53,13 @@ public class AdapterMensagens extends RecyclerView.Adapter<AdapterMensagens.MyVi
         Mensagem mensagem = mensagems.get(position);
         String msg = mensagem.getMensagem();
         String imagem = mensagem.getImagem();
-
         if (imagem != null) {
-            Picasso.get()
+
+            Glide.with(context)
                     .load(imagem)
                     .into(holder.imagem);
+
+
             String nome = mensagem.getNome();
             if(!nome.isEmpty()){
                 holder.nome.setText(nome);
@@ -64,7 +67,7 @@ public class AdapterMensagens extends RecyclerView.Adapter<AdapterMensagens.MyVi
                 holder.nome.setVisibility(View.GONE);
             }
             //Esconder o texto
-            holder.mensagem.setVisibility(View.GONE);
+              holder.mensagem.setVisibility(View.GONE);
         } else {
           holder.mensagem.setText(msg);
 
@@ -102,7 +105,7 @@ public class AdapterMensagens extends RecyclerView.Adapter<AdapterMensagens.MyVi
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView mensagem,nome;
+        TextView mensagem,nome,textHora;
         ImageView imagem;
 
         public MyViewHolder(@NonNull View itemView) {
@@ -111,6 +114,7 @@ public class AdapterMensagens extends RecyclerView.Adapter<AdapterMensagens.MyVi
             mensagem = itemView.findViewById(R.id.textMensagem);
             imagem = itemView.findViewById(R.id.imageMensgemFoto);
             nome = itemView.findViewById(R.id.textNomeExibicao);
+            //textHora = itemView.findViewById(R.id.textViewHora);
         }
     }
 }

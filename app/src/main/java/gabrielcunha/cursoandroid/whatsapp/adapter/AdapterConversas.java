@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -53,9 +54,11 @@ public class AdapterConversas extends RecyclerView.Adapter<AdapterConversas.MyVi
             holder.nomePerfil.setText(grupo.getNome());
             if (grupo.getFoto() != null) {
                 Uri uri = Uri.parse(grupo.getFoto());
-                Picasso.get()
+
+                Glide.with(context)
                         .load(uri)
                         .into(holder.imagemPerfil);
+
             } else {
                 holder.imagemPerfil.setImageResource(R.drawable.padrao);
             }

@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -52,7 +53,7 @@ public class AdapterContatos extends RecyclerView.Adapter<AdapterContatos.MyView
 
         if (usuario.getFoto() != null) {
             Uri uri = Uri.parse(usuario.getFoto());
-            Picasso.get()
+            Glide.with(context)
                     .load(uri)
                     .into(holder.imagemPerfil);
         } else {

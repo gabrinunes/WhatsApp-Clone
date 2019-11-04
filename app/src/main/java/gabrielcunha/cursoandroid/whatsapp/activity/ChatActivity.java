@@ -29,7 +29,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -55,6 +58,12 @@ public class ChatActivity extends AppCompatActivity {
     private Usuario usuarioRemetente = UsuarioFirebase.getDadosUsuarioLogado();
     private AdapterMensagens adapterMensagens;
     private List<Mensagem> mensagens = new ArrayList<>();
+    private SimpleDateFormat formataData;
+    private SimpleDateFormat formataHora;
+    private String dataFormatada;
+    private String horaAtual;
+    Date data = new Date();
+    Calendar cal;
     private DatabaseReference firebaseRef;
     private DatabaseReference mensagensRef;
     private StorageReference storageReference;
@@ -75,6 +84,18 @@ public class ChatActivity extends AppCompatActivity {
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
         inicializarComponentes();
+
+        //Configurar data
+        formataData = new SimpleDateFormat("dd-MM-yyyy");
+        formataHora = new SimpleDateFormat("HH:mm");
+
+        dataFormatada = formataData.format(data);
+        cal = Calendar.getInstance();
+        cal.setTime(data);
+        Date dataAtual = cal.getTime();
+        horaAtual = formataHora.format(dataAtual);
+
+
 
         //Recuperar dados do usuário destinatario
         Bundle bundle = getIntent().getExtras();
@@ -231,6 +252,7 @@ public class ChatActivity extends AppCompatActivity {
                 Mensagem msg = new Mensagem();
                 msg.setIdUsuario(idUsuarioRemetente);
                 msg.setMensagem(textoMensagem);
+                msg.setHora(horaAtual);
 
                 //Salvar a mensagem para o remetente
                 salvarMensagem(idUsuarioRemetente, idUsuarioDestinatario, msg);

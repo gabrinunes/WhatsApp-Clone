@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -47,7 +48,7 @@ public class GrupoSelecionadoAdapter extends RecyclerView.Adapter<GrupoSeleciona
 
             if (usuario.getFoto() != null) {
                 Uri uri = Uri.parse(usuario.getFoto());
-                Picasso.get()
+                Glide.with(context)
                         .load(uri)
                         .into(holder.fotoPerfil);
             } else {
